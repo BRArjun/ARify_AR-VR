@@ -1,3 +1,4 @@
+<img src="src/selection_030.png"></img>
 # Python AR Application with OpenCV and numpy
 
 This application is an Augmented Reality (AR) application built using Python, numpy, and OpenCV. It enables rendering 3D models on top of a reference surface detected in the video feed.
@@ -7,6 +8,12 @@ This application is an Augmented Reality (AR) application built using Python, nu
 - Real-time rendering of 3D models on top of a reference surface
 - Support for different 3D models in .obj format
 - Command-line arguments for visualization options
+
+## Overall Workflow
+
+<img src="src/ar-page-112.png"></img>
+
+Additionally you can also refer to my notes for further clarity regarding the project.
 
 ## Installation
 
@@ -43,6 +50,6 @@ Unable to capture video
 ```
 printed on your terminal, the most likely cause is that your OpenCV installation has been compiled without FFMPEG support.
 Especially for Linux users, make sure that your OpenCV installation has been compiled with FFMPEG support. Otherwise, capturing video will fail. Pre-built OpenCV packages such as the ones downloaded via pip are not compiled with FFMPEG support, which means that you will have to build it manually.
-## Results
 
-<img
+## Results
+<img src="src/selection_031.png"></img>
