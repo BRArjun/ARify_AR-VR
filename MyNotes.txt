@@ -1,7 +1,8 @@
-These are my notes for the development of an AR/VR project using Python and OpenCV.
+These are my notes for the development of an AR project using Python and OpenCV.
 
 Here is the link of the blog post that i referred to while making this:
 https://bitesofcode.wordpress.com/2017/09/12/augmented-reality-with-python-and-opencv-part-1/
+https://bitesofcode.wordpress.com/2018/09/16/augmented-reality-with-python-and-opencv-part-2/
 
 So basically this process can be divided into 4 steps:
 
@@ -100,11 +101,11 @@ We will use the numpy library for the algebra part of the project.
 	After finding this matrix we are ready to render the .obj files of our 3D characters.
 	The code that we use to render the 3D object can be split apart like this:
 	- First we write a function that can load only the geometry of the model and not render it.
-	- After the geometry gets loaded we make use of another function to read this data and render the object on top of the video frame along with 		the projection matrix.
+	- After the geometry gets loaded we make use of another function to read this data and render the object on top of the video frame along with the projection matrix.
 
 	To render it on top of the video frame we take every point that has been used to describe the model and multiply it with the projection matrix
 
 	And that is all there is to the project.
-	The source code can be taken from https://github.com/juangallostra/augmented-reality.
+Thanks and Bye!
 
 
