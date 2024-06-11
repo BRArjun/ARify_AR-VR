@@ -29,6 +29,11 @@ pip install numpy opencv-python
 * To change the size of the rendered model change the scale parameter (number `3`) in line 103 of `src/ar_main.py` by a suitable number. This might require some trial and error.
 * Open a terminal session inside the project folder and run `python3 src/ar_main.py`
 
+### Command line arguments
+
+* `--rectangle`, `-r`: Draws the projection of the reference surface on the video frame as a blue rectangle.
+* `--matches`, `-m`: Draws matches between reference surface and video frame.
+
 ## Troubleshooting
 
 **If you get the message**:
