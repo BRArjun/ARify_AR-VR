@@ -1,0 +1,110 @@
+These are my notes for the development of an AR/VR project using Python and OpenCV.
+
+Here is the link of the blog post that i referred to while making this:
+https://bitesofcode.wordpress.com/2017/09/12/augmented-reality-with-python-and-opencv-part-1/
+
+So basically this process can be divided into 4 steps:
+
+1. Identify the flat surface on which we need to project the 3D model.
+2. Determine its homography.
+	Homography is basically trying to get a flat surface out of a given object relative to the orientation of the object.
+3. Derive the transformation required from the flat surface coordinate system to the given object coordinate system.
+4. Project the 3D image relative to the orientation of the object.
+(P.S. : Refer to the blog post for an image showing this process more clearly.)
+
+We will use the numpy library for the algebra part of the project.
+
+** Recognizing the Target Surface **:
+	We will be using a Feature Extraction approach to do this. Here we will use a reference image of the flat surface that we want to get 
+	recognized. This serves as the reference to the surface detection model as it identifies features that stand out from the reference image
+	and then compares this with the given object surface.
+	If a certain number of positive features are matching between the object and the reference surface then we assume that we have found the 
+	flat surface.
+
+	A feature ideally needs to comply with these 2 properties:
+	1. It should be uniquely identifiable.
+	2. It should be invariant with transformations which means changes in environmental conditions should not affect the feature.
+
+
+	Then we move to the Feature Description phase where the information from the detected feature and its surroundings are kept in a Descriptor.
+
+	Then these Descriptors from various features found within the reference image are kept inside a Feature Vector which is a vector that 
+	contains the Descriptors of the various keypoints found in the image of the reference surface.
+
+	We will be using the ORB( Oriented Fast and Rotated BRIEF) algorithm for converting the image to a feature vector although there are others
+	like SURF,SIFT or Harris.
+
+	Fast is an algorithm that is used in Feature Extraction where we compare a single pixel in the image array with the surrounding 16 pixels that
+	form a circle around that pixel.
+	Then we sort the pixels into 3 categories:
+	- Pixels lighter than the reference pixel.
+	- Pixels darker than the reference pixel.
+	- Pixels similar to the reference pixel.
+
+	If more than 8 pixels are darker or lighter than the reference pixel then we choose the reference pixel as a keypoint.
+	Hence this helps us in finding edges in an image.
+
+	BRIEF then takes all keypoints from the Fast algorithm and turns them into binary feature vectors so that together they can represent an 
+	object.
+	BRIEF smoothens the image using a Gaussian Kernel so that the descriptor can be prevented from being too sensitive to high frequency noise.
+
+	Then BRIEF selects a random pair of pixels around that keypoint in a defined neighbourhood.
+	If the second pixel is brighter than the first then we set the corresponding bit to 1 else 0.
+
+
+	This is the basic mechanism of ORB.
+
+	Now we see the reference image has been represented as a set of binary feature vectors.
+
+	
+
+	Next we move on to Feature Matching where we use a brute force approach of calculating Hamming Distance to find the closest match between the
+	feature vectors of the object and the reference surface and also between the reference surface and the object.
+	This makes sure that we are getting the accurately matched features.
+
+
+** Homography Estimation **:
+	Here we will find the transformation required to map points from the surface plane to the image plane.
+
+	We will find the Homography matrix which is a representation of the image plane relative to the surface plane.	
+
+	It is an iterative algorithm that is used for model fitting in the presence of a large number of outliers.
+	In this context, outliers mean those points that we are not exactly sure to be a valid match.
+
+	This is the outline for the RANSAC algorithm:
+	- Choose a small subset of points at random.
+	- Fit a model on those points.
+	- Find all remaining points that are "close" to the model and reject the rest as outliers.
+	- Do this as many times and choose the best model.
+
+
+	RANSAC in the case of Homography estimation works with the following outline:
+	- Randomly sample 4 matches.
+	- Estimate Homography H.
+	- Verify the Homography and search for other matches consistent with H.
+	- Iterate until convergence.
+
+	The method to find the Homography and why we took 4 matches is mathematically difficult.
+
+	The term consistent with H basically means the matches that were not used to estimate the homography should lie close to the projected points
+	from the reference surface.
+
+	We iterate till convergence that is we iterate till the number of outliers are minimum for a given homography of a subset of points.
+	This is the best Homography Matrix.
+
+
+	Then we go on to find the 3D projection matrix for the surface:
+	- After finding the RANSAC Homography Matrix we find the camera calibration matrix.
+	- Using these 2 matrices we can find 3D projection matrix.
+
+	After finding this matrix we are ready to render the .obj files of our 3D characters.
+	The code that we use to render the 3D object can be split apart like this:
+	- First we write a function that can load only the geometry of the model and not render it.
+	- After the geometry gets loaded we make use of another function to read this data and render the object on top of the video frame along with 		the projection matrix.
+
+	To render it on top of the video frame we take every point that has been used to describe the model and multiply it with the projection matrix
+
+	And that is all there is to the project.
+	The source code can be taken from https://github.com/juangallostra/augmented-reality.
+
+
